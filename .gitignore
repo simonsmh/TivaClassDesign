@@ -1,0 +1,13 @@
+Listings/
+Objects/
+RTE/
+*.uvguix.*
+*.lst
+*.map
+*.d
+*.o
+*.htm
+*.lnp
+*.sct
+*.dep
+*.axf
