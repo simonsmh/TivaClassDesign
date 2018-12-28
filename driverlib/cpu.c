@@ -90,15 +90,18 @@ CPUcpsid(void)
 #pragma diag_default=Pe940
 #endif
 #if defined(rvmdk) || defined(__ARMCC_VERSION)
-__asm uint32_t
+uint32_t
 CPUcpsid(void)
 {
     //
     // Read PRIMASK and disable interrupts.
     //
-    mrs     r0, PRIMASK;
-    cpsid   i;
-    bx      lr
+    __asm(
+		"mrs     r0, PRIMASK;"
+    "cpsid   i;"
+    "bx      lr"
+		);
+	return 0;
 }
 #endif
 #if defined(ccs)
@@ -170,14 +173,18 @@ CPUprimask(void)
 #pragma diag_default=Pe940
 #endif
 #if defined(rvmdk) || defined(__ARMCC_VERSION)
-__asm uint32_t
+uint32_t
 CPUprimask(void)
 {
     //
     // Read PRIMASK and disable interrupts.
     //
-    mrs     r0, PRIMASK;
-    bx      lr
+    __asm(
+		"mrs     r0, PRIMASK;"
+    "bx      lr"
+		);
+	
+		return 0;
 }
 #endif
 #if defined(ccs)
@@ -250,15 +257,19 @@ CPUcpsie(void)
 #pragma diag_default=Pe940
 #endif
 #if defined(rvmdk) || defined(__ARMCC_VERSION)
-__asm uint32_t
+uint32_t
 CPUcpsie(void)
 {
     //
     // Read PRIMASK and enable interrupts.
     //
-    mrs     r0, PRIMASK;
-    cpsie   i;
-    bx      lr
+    __asm(
+		"mrs     r0, PRIMASK;"
+    "cpsie   i;"
+    "bx      lr"
+		);
+	
+		return 0;
 }
 #endif
 #if defined(ccs)
@@ -310,14 +321,16 @@ CPUwfi(void)
 }
 #endif
 #if defined(rvmdk) || defined(__ARMCC_VERSION)
-__asm void
+void
 CPUwfi(void)
 {
     //
     // Wait for the next interrupt.
     //
-    wfi;
-    bx      lr
+    __asm(
+		"wfi;"
+    "bx      lr"
+		);
 }
 #endif
 #if defined(ccs)
@@ -358,14 +371,16 @@ CPUbasepriSet(uint32_t ui32NewBasepri)
 }
 #endif
 #if defined(rvmdk) || defined(__ARMCC_VERSION)
-__asm void
+void
 CPUbasepriSet(uint32_t ui32NewBasepri)
 {
     //
     // Set the BASEPRI register
     //
-    msr     BASEPRI, r0;
-    bx      lr
+    __asm(
+		"msr     BASEPRI, r0;"
+    "bx      lr"
+		);
 }
 #endif
 #if defined(ccs)
@@ -425,14 +440,18 @@ CPUbasepriGet(void)
 #pragma diag_default=Pe940
 #endif
 #if defined(rvmdk) || defined(__ARMCC_VERSION)
-__asm uint32_t
+uint32_t
 CPUbasepriGet(void)
 {
     //
     // Read BASEPRI
     //
-    mrs     r0, BASEPRI;
-    bx      lr
+    __asm(
+		"mrs     r0, BASEPRI;"
+    "bx      lr"
+		);
+	
+		return 0;
 }
 #endif
 #if defined(ccs)

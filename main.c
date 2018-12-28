@@ -19,23 +19,10 @@
 #include "driverlib/gpio.h"
 #include "driverlib/pin_map.h"
 #include "driverlib/sysctl.h"
-#include "driverlib/systick.h"
-#include "driverlib/ssi.h"
 #include "driverlib/adc.h"
-#include "driverlib/interrupt.h"
-#include "driverlib/sysctl.h"
-#include "driverlib/systick.h"
-#include "driverlib/gpio.h"
-#include "driverlib/pin_map.h"
-#include "driverlib/rom.h"
+#include "driverlib/uart.h"
 #include "driverlib/uc1701.h"
 #include "utils/uartstdio.h"
-
-//*****************************************************************************
-//Attention
-//TM4C123 NMI unlock - To those who want to use PF0 and PD7, be reminded that these pins defaults as NMI ! ! !
-//
-//*****************************************************************************
 
 //*****************************************************************************
 //
@@ -91,6 +78,7 @@ ConfigureUART(void)
     GPIOPinConfigure(GPIO_PA0_U0RX);
     GPIOPinConfigure(GPIO_PA1_U0TX);
     GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+    UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 115200,(UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
 
     //
     // Initialize the UART for console I/O.
@@ -134,15 +122,28 @@ main(void)
     // Set the system clock to run at 200/5=40MHz using the PLL.  When
     // using the ADC, you must either use the PLL or supply a 16 MHz clock
     // source.
-    SysCtlClockSet(SYSCTL_SYSDIV_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
+    SysCtlClockSet(SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
                    SYSCTL_XTAL_16MHZ);
 	
     //
     // LED init
     //
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
-	  GPIOPinTypeGPIOOutput(GPIO_PORTA_BASE, GPIO_PIN_4);
-    GPIOPinWrite(GPIO_PORTA_BASE,GPIO_PIN_4,0<<4);	
+		SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+	  HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
+    HWREG(GPIO_PORTF_BASE + GPIO_O_CR) |= 0x01;
+    HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = 0;		
+		
+	  GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_0);
+    GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_0,1<<0);
+
+		GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_1);
+    GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_1,0<<1);
+		
+		GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_2);
+    GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_2,0<<2);
+		
+		GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_3);
+    GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_3,0<<3);
 
     //
     // enable processer interrupt
@@ -163,8 +164,8 @@ main(void)
     //
     // Display the setup on the console.
     //
-    UARTprintf("ADC ->\n");
-    UARTprintf("  Input Pin: AIN3/PE0\n\n");
+    //UARTprintf("ADC ->\n");
+    //UARTprintf("  Input Pin: AIN3/PE0\n\n");
 
     //
     // example ADC0 is used with AIN3 on port E0.
@@ -221,6 +222,12 @@ main(void)
 		
 		UC1701Init(60000);
     UC1701Clear();
+		
+		//First Line goes to ADC
+		//Last Three Line goes to UART
+		unsigned int line=1,row=0;
+		unsigned char input=0;
+		
     while(1)
     {
         //
@@ -232,26 +239,48 @@ main(void)
         if(flag==1)
 				{
 					value=sum/8;
-				  UARTprintf("%d\n",value);
-					UC1701Clear();
+					for(int i=1;i<4;i++){
+						UC1701Display(0,i,' ');
+					}
 					UC1701DisplayN(0, 0,value);
-					if(value>2600)
-					{
-					GPIOPinWrite(GPIO_PORTA_BASE,GPIO_PIN_4,1<<4);
-					}
-					else
-					{
-					GPIOPinWrite(GPIO_PORTA_BASE,GPIO_PIN_4,0<<4);
-					SysCtlDelay(SysCtlClockGet() / 5);	
-					}
+					UC1701Display(line,row,'_');
+					SysCtlDelay(SysCtlClockGet() / 40);	
 				  flag=0;
 					sum=0;
-				}
+					
+					while (UARTCharsAvail(UART0_BASE))
+					{
+						input = UARTCharGet(UART0_BASE);
+						if((input <= 126) && (input >= 32 ))
+							{
+								UC1701Display(line,row,input);
+								row+=1;
+							}
+						}
+						if((row >= 16) || (input == '\r')) {
+							UC1701Display(line,row,' ');
+							line+=1;
+							row=0;
+						}
+						if(line==4){
+							line=1;
+							row=0;
+							//Clean Up
+							for(int i=1;i<4;i++){
+								for(int j=0;j<16;j++){
+									UC1701Display(i,j,' ');
+								}
+							}
+							SysCtlDelay(200);
+							UC1701Display(line,row,'_');
+						}
+						input = 0;
+					}
 
 				//
 				//sample delay
 				//
-        SysCtlDelay(1000);				
+        SysCtlDelay(1000);
+				
     }
-   
 }

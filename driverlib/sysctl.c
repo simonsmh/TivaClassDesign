@@ -1840,12 +1840,13 @@ SysCtlDelay(uint32_t ui32Count)
 }
 #endif
 #if defined(rvmdk) || defined(__ARMCC_VERSION)
-__asm void
-SysCtlDelay(uint32_t ui32Count)
+void SysCtlDelay(uint32_t ui32Count)
 {
-    subs    r0, #1;
-    bne     SysCtlDelay;
-    bx      lr;
+	__asm__ (
+    "subs    r0, #1;"
+    "bne     SysCtlDelay;"
+    "bx      lr;"
+	);
 }
 #endif
 //

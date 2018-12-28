@@ -9,13 +9,13 @@ extern void UC1701DataWrite(unsigned char ucData);
 extern void UC1701CmdWrite(unsigned char ucCmd);
 extern void UC1701DoubleCmdWrite(unsigned char ucCmd, unsigned char ucData);
 extern void UC1701AddressSet(unsigned char ucPA, unsigned char ucCA);
-extern void UC1701Dispaly(unsigned char ucLine, unsigned char ucRow,
+extern void UC1701Display(unsigned char ucLine, unsigned char ucRow,
                            unsigned char ucAsciiWord);
-extern void UC1701InverseDispaly(unsigned char ucLine, unsigned char ucRow,
+extern void UC1701InverseDisplay(unsigned char ucLine, unsigned char ucRow,
                                  unsigned char ucAsciiWord);
-extern void UC1701CharDispaly(unsigned char ucLine, unsigned char ucRow,
+extern void UC1701CharDisplay(unsigned char ucLine, unsigned char ucRow,
                               char *pcChar);
-extern void UC1701ChineseDispaly(unsigned char ucLine, unsigned char ucRow,
+extern void UC1701ChineseDisplay(unsigned char ucLine, unsigned char ucRow,
                                  unsigned char ucLength, char *pcChar);
 extern void UC1701DisplayN(unsigned char ucLine, unsigned char ucRow,
                              unsigned long n);
