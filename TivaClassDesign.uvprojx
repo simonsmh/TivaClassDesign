@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>Tiva_LED_ADC_UART</TargetName>
+      <TargetName>Tiva_LCD_ADC_UART</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>6100001::V6.10.1::.\ARMCLANG</pCCUsed>
@@ -52,7 +52,7 @@
           <OutputName>TivaClassDesign</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\Listings\</ListingPath>
@@ -141,7 +141,7 @@
           <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
-          <pFcarmGrp></pFcarmGrp>
+          <pFcarmGrp>user</pFcarmGrp>
           <pFcArmRoot></pFcArmRoot>
           <FcArmLst>0</FcArmLst>
         </Utilities>
@@ -383,19 +383,9 @@
           <GroupName>driverlib</GroupName>
           <Files>
             <File>
-              <FileName>uc1701.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\driverlib\uc1701.c</FilePath>
-            </File>
-            <File>
               <FileName>driverlib.lib</FileName>
               <FileType>4</FileType>
-              <FilePath>.\driverlib\driverlib.lib</FilePath>
-            </File>
-            <File>
-              <FileName>uc1701.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\driverlib\uc1701.h</FilePath>
+              <FilePath>.\driverlib\rvmdk\driverlib.lib</FilePath>
             </File>
           </Files>
         </Group>
@@ -406,6 +396,26 @@
               <FileName>asmdefs.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\inc\asmdefs.h</FilePath>
+            </File>
+            <File>
+              <FileName>hw_ints.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\inc\hw_ints.h</FilePath>
+            </File>
+            <File>
+              <FileName>hw_memmap.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\inc\hw_memmap.h</FilePath>
+            </File>
+            <File>
+              <FileName>hw_types.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\inc\hw_types.h</FilePath>
+            </File>
+            <File>
+              <FileName>hw_uc1701.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\inc\hw_uc1701.h</FilePath>
             </File>
             <File>
               <FileName>hw_adc.h</FileName>
@@ -478,24 +488,19 @@
               <FilePath>.\inc\hw_i2c.h</FilePath>
             </File>
             <File>
-              <FileName>hw_ints.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\hw_ints.h</FilePath>
-            </File>
-            <File>
               <FileName>hw_lcd.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\inc\hw_lcd.h</FilePath>
             </File>
             <File>
-              <FileName>hw_memmap.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\hw_memmap.h</FilePath>
-            </File>
-            <File>
               <FileName>hw_nvic.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\inc\hw_nvic.h</FilePath>
+            </File>
+            <File>
+              <FileName>hw_onewire.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\inc\hw_onewire.h</FilePath>
             </File>
             <File>
               <FileName>hw_pwm.h</FileName>
@@ -533,11 +538,6 @@
               <FilePath>.\inc\hw_timer.h</FilePath>
             </File>
             <File>
-              <FileName>hw_types.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\hw_types.h</FilePath>
-            </File>
-            <File>
               <FileName>hw_uart.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\inc\hw_uart.h</FilePath>
@@ -556,16 +556,6 @@
               <FileName>hw_watchdog.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\inc\hw_watchdog.h</FilePath>
-            </File>
-            <File>
-              <FileName>tm4c123gh6pm.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\tm4c123gh6pm.h</FilePath>
-            </File>
-            <File>
-              <FileName>hw_uc1701.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\hw_uc1701.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -592,6 +582,146 @@
               <FileType>5</FileType>
               <FilePath>.\utils\uartstdio.h</FilePath>
             </File>
+            <File>
+              <FileName>uc1701.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\utils\uc1701.c</FilePath>
+            </File>
+            <File>
+              <FileName>uc1701.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\utils\uc1701.h</FilePath>
+            </File>
+            <File>
+              <FileName>cpu_usage.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\utils\cpu_usage.c</FilePath>
+            </File>
+            <File>
+              <FileName>cpu_usage.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\utils\cpu_usage.h</FilePath>
+            </File>
+            <File>
+              <FileName>eeprom_pb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\utils\eeprom_pb.c</FilePath>
+            </File>
+            <File>
+              <FileName>eeprom_pb.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\utils\eeprom_pb.h</FilePath>
+            </File>
+            <File>
+              <FileName>flash_pb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\utils\flash_pb.c</FilePath>
+            </File>
+            <File>
+              <FileName>flash_pb.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\utils\flash_pb.h</FilePath>
+            </File>
+            <File>
+              <FileName>isqrt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\utils\isqrt.c</FilePath>
+            </File>
+            <File>
+              <FileName>isqrt.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\utils\isqrt.h</FilePath>
+            </File>
+            <File>
+              <FileName>random.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\utils\random.c</FilePath>
+            </File>
+            <File>
+              <FileName>random.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\utils\random.h</FilePath>
+            </File>
+            <File>
+              <FileName>ringbuf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\utils\ringbuf.c</FilePath>
+            </File>
+            <File>
+              <FileName>ringbuf.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\utils\ringbuf.h</FilePath>
+            </File>
+            <File>
+              <FileName>sine.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\utils\sine.c</FilePath>
+            </File>
+            <File>
+              <FileName>sine.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\utils\sine.h</FilePath>
+            </File>
+            <File>
+              <FileName>smbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\utils\smbus.c</FilePath>
+            </File>
+            <File>
+              <FileName>smbus.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\utils\smbus.h</FilePath>
+            </File>
+            <File>
+              <FileName>softi2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\utils\softi2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>softi2c.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\utils\softi2c.h</FilePath>
+            </File>
+            <File>
+              <FileName>softssi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\utils\softssi.c</FilePath>
+            </File>
+            <File>
+              <FileName>softssi.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\utils\softssi.h</FilePath>
+            </File>
+            <File>
+              <FileName>softuart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\utils\softuart.c</FilePath>
+            </File>
+            <File>
+              <FileName>softuart.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\utils\softuart.h</FilePath>
+            </File>
+            <File>
+              <FileName>spi_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\utils\spi_flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi_flash.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\utils\spi_flash.h</FilePath>
+            </File>
+            <File>
+              <FileName>ustdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\utils\ustdlib.c</FilePath>
+            </File>
+            <File>
+              <FileName>ustdlib.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\utils\ustdlib.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -617,7 +747,7 @@
       <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.1.2" condition="ARMv6_7_8-M Device">
         <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.4.0"/>
         <targetInfos>
-          <targetInfo name="Tiva_LED_ADC_UART"/>
+          <targetInfo name="Tiva_LCD_ADC_UART"/>
         </targetInfos>
       </component>
     </components>

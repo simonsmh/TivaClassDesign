@@ -2,7 +2,7 @@
 //
 // smbus.c - SMBus protocol layer API.
 //
-// Copyright (c) 2010-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2010-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 2.1.0.12573 of the Tiva Utility Library.
+// This is part of revision 2.1.4.178 of the Tiva Utility Library.
 //
 //*****************************************************************************
 
@@ -2023,9 +2023,17 @@ SMBusMasterI2CWriteRead(tSMBus *psSMBus, uint8_t ui8TargetAddress,
     if(ui8TxSize == 1)
     {
         //
-        // Move to the read first state for the turn around.
+        // Move to appropriate read state for the turn around based on
+        // receive size.
         //
-        psSMBus->ui8MasterState = SMBUS_STATE_READ_FIRST;
+        if(ui8RxSize == 1)
+        {
+           psSMBus->ui8MasterState = SMBUS_STATE_READ_ONE;
+        }
+        else
+        {
+           psSMBus->ui8MasterState = SMBUS_STATE_READ_FIRST;
+        }
     }
     else if(ui8TxSize == 2)
     {

@@ -2,6 +2,7 @@ Listings/
 Objects/
 RTE/
 *.uvguix.*
+*.uvgui.*
 *.lst
 *.map
 *.d
@@ -11,3 +12,8 @@ RTE/
 *.sct
 *.dep
 *.axf
+*.crf
+*.o
+*.d
+*.Scr
+*.scvd

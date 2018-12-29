@@ -3,7 +3,7 @@
 // swupdate.c - A module wrapping the Ethernet bootloader software update
 //              functionality.
 //
-// Copyright (c) 2008-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2008-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -19,7 +19,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 2.1.0.12573 of the Tiva Utility Library.
+// This is part of revision 2.1.4.178 of the Tiva Utility Library.
 //
 //*****************************************************************************
 
@@ -340,7 +340,7 @@ SoftwareUpdateBegin(uint32_t ui32SysClock)
     // Return control to the boot loader.  This is a call to the SVC
     // handler in the flashed-based boot loader, or to the ROM if configured.
     //
-#if ((defined ROM_UpdateEthernet) && !(defined USE_FLASH_BOOT_LOADER))
+#if ((defined ROM_UpdateEMAC) && !(defined USE_FLASH_BOOT_LOADER))
     ROM_UpdateEMAC(ui32SysClock);
 #else
     (*((void (*)(void))(*(uint32_t *)0x2c)))();

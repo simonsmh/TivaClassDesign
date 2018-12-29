@@ -5,10 +5,8 @@
 #include "driverlib/gpio.h"
 #include "driverlib/pin_map.h"
 #include "driverlib/sysctl.h"
-#include "driverlib/systick.h"
 #include "driverlib/ssi.h"
 #include "uc1701.h"
-#include "hw_uc1701.h"
 
 //#define   LCD_PIN_SPI_CLK   GPIO_PORTB_BASE  //PB4
 #define   LCD_PIN_SPI_CS    GPIO_PORTA_BASE  //PA5

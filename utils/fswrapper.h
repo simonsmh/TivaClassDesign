@@ -3,7 +3,7 @@
 // fswrapper.h - Public type definitons and function prototypes for the simple
 //               file system wrapper module.
 //
-// Copyright (c) 2008-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2008-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -19,7 +19,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 2.1.0.12573 of the Tiva Utility Library.
+// This is part of revision 2.1.4.178 of the Tiva Utility Library.
 //
 //*****************************************************************************
 

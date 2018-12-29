@@ -2,7 +2,6 @@
 #define __UC1701_H__
 
 #include "hw_uc1701.h"
-#include "uc1701.h"
 
 extern void UC1701Init(unsigned long ulSpiClock);
 extern void UC1701DataWrite(unsigned char ucData);

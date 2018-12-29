@@ -3,7 +3,7 @@
 // cpu.c - Instruction wrappers for special CPU instructions needed by the
 //         drivers.
 //
-// Copyright (c) 2006-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2006-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 2.1.0.12573 of the Tiva Peripheral Driver Library.
+// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -90,18 +90,15 @@ CPUcpsid(void)
 #pragma diag_default=Pe940
 #endif
 #if defined(rvmdk) || defined(__ARMCC_VERSION)
-uint32_t
+__asm uint32_t
 CPUcpsid(void)
 {
     //
     // Read PRIMASK and disable interrupts.
     //
-    __asm(
-		"mrs     r0, PRIMASK;"
-    "cpsid   i;"
-    "bx      lr"
-		);
-	return 0;
+    mrs     r0, PRIMASK;
+    cpsid   i;
+    bx      lr
 }
 #endif
 #if defined(ccs)
@@ -173,18 +170,14 @@ CPUprimask(void)
 #pragma diag_default=Pe940
 #endif
 #if defined(rvmdk) || defined(__ARMCC_VERSION)
-uint32_t
+__asm uint32_t
 CPUprimask(void)
 {
     //
     // Read PRIMASK and disable interrupts.
     //
-    __asm(
-		"mrs     r0, PRIMASK;"
-    "bx      lr"
-		);
-	
-		return 0;
+    mrs     r0, PRIMASK;
+    bx      lr
 }
 #endif
 #if defined(ccs)
@@ -257,19 +250,15 @@ CPUcpsie(void)
 #pragma diag_default=Pe940
 #endif
 #if defined(rvmdk) || defined(__ARMCC_VERSION)
-uint32_t
+__asm uint32_t
 CPUcpsie(void)
 {
     //
     // Read PRIMASK and enable interrupts.
     //
-    __asm(
-		"mrs     r0, PRIMASK;"
-    "cpsie   i;"
-    "bx      lr"
-		);
-	
-		return 0;
+    mrs     r0, PRIMASK;
+    cpsie   i;
+    bx      lr
 }
 #endif
 #if defined(ccs)
@@ -321,16 +310,14 @@ CPUwfi(void)
 }
 #endif
 #if defined(rvmdk) || defined(__ARMCC_VERSION)
-void
+__asm void
 CPUwfi(void)
 {
     //
     // Wait for the next interrupt.
     //
-    __asm(
-		"wfi;"
-    "bx      lr"
-		);
+    wfi;
+    bx      lr
 }
 #endif
 #if defined(ccs)
@@ -371,16 +358,14 @@ CPUbasepriSet(uint32_t ui32NewBasepri)
 }
 #endif
 #if defined(rvmdk) || defined(__ARMCC_VERSION)
-void
+__asm void
 CPUbasepriSet(uint32_t ui32NewBasepri)
 {
     //
     // Set the BASEPRI register
     //
-    __asm(
-		"msr     BASEPRI, r0;"
-    "bx      lr"
-		);
+    msr     BASEPRI, r0;
+    bx      lr
 }
 #endif
 #if defined(ccs)
@@ -440,18 +425,14 @@ CPUbasepriGet(void)
 #pragma diag_default=Pe940
 #endif
 #if defined(rvmdk) || defined(__ARMCC_VERSION)
-uint32_t
+__asm uint32_t
 CPUbasepriGet(void)
 {
     //
     // Read BASEPRI
     //
-    __asm(
-		"mrs     r0, BASEPRI;"
-    "bx      lr"
-		);
-	
-		return 0;
+    mrs     r0, BASEPRI;
+    bx      lr
 }
 #endif
 #if defined(ccs)
