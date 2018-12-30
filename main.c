@@ -103,7 +103,7 @@ int main(void)
 
 	// First Line goes to ADC & LCD
 	// Last Three Line goes to UART
-	uint8_t line = 1, row = 0, count = 8;
+	int8_t line = 1, row = 0, count = 8;
 	while (1)
 	{
 		// Trigger ADC0 conversion
@@ -144,9 +144,11 @@ int main(void)
 		/// Loop For All Chars Avaliable
 		while (UARTCharsAvail(UART0_BASE))
 		{
-			uint8_t input = UARTCharGet(UART0_BASE);
-			//UC1701DisplayN(3,0,input);
+			uint16_t input = UARTCharGet(UART0_BASE);
 			
+			// Display Input ASCII Number
+			//UC1701DisplayN(0,9,input);
+
 			// Display Input ASCII Char
 			if ((input <= 126) && (input >= 32))
 			{
@@ -176,8 +178,8 @@ int main(void)
 				row = 15;
 			}
 
-			// Clean Screen
-			if ((line > 3) || (line < 1))
+			// SIGTERM / Clean Screen
+			if ((line > 3) || (line < 1) || (input == 3))
 			{
 				line = 1;
 				row = 0;
@@ -188,7 +190,10 @@ int main(void)
 					}
 				}
 			}
-
+			
+			// Current Pointer Location
+			//UC1701DisplayN(0,5,row);
+			//UC1701DisplayN(0,7,line);
 			input = 0;
 		}
 	}
