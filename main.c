@@ -18,6 +18,10 @@
 uint8_t flag = 0;
 uint32_t pui32ADC0Value[8] = {0}, sum = 0;
 
+// First Line goes to ADC & LCD
+// Last Three Line goes to UART
+int8_t line = 1, row = 0;
+
 void ADC0Sequence0Handler(void)
 {
 	uint16_t i;
@@ -28,10 +32,99 @@ void ADC0Sequence0Handler(void)
 		sum = sum + (pui32ADC0Value[i] * 3300 / 4096);
 	}
 	flag = 1;
+
+	// ADC Display
+	if (flag == 1)
+	{
+		uint32_t value = sum / 8;
+		uint8_t tmp_value = value, digit = 0;
+		while (tmp_value != 0)
+		{
+			tmp_value /= 10;
+			digit++;
+		}
+		for (int i = digit; i < 4; i++) {
+			UC1701Display(0, i, ' ');
+		}
+		UC1701DisplayN(0, 0, value);
+		flag = 0;
+		sum = 0;
+	}
+}
+
+void UART0Handler(void)
+{
+	uint32_t ulStatus;
+    //获取中断状态
+    ulStatus = UARTIntStatus(UART0_BASE, true);
+    //清除中断标志
+    //UARTIntClear(UART0_BASE, ulStatus);
+	UARTIntClear(UART0_BASE, 0); // Clear the UART interrupt flag.
+	// UART Display
+	/// Loop For All Chars Avaliable
+	while (UARTCharsAvail(UART0_BASE))
+	{
+		unsigned long input = UARTCharGet(UART0_BASE);
+		
+		// Display Input ASCII Number
+		UC1701DisplayN(0,9,input);
+
+		// Display Input ASCII Char
+		if ((input <= 126) && (input >= 32))
+		{
+			UC1701Display(line, row, input);
+			row += 1;
+		}
+
+		// Next Line
+		if ((row > 15) || (input == '\r'))
+		{
+			UC1701Display(line, row, ' ');
+			line += 1;
+			row = 0;
+		}
+
+		// Backspace
+		if (input == 127)
+		{
+			UC1701Display(line, row, ' ');
+			row -= 1;
+		}
+
+		// Last Line
+		if (row < 0)
+		{
+			line -= 1;
+			row = 15;
+		}
+
+		// SIGTERM / Clean Screen
+		if ((line > 3) || (line < 1) || (input == 3))
+		{
+			line = 1;
+			row = 0;
+			// Clean Up
+			for (int i = 1; i < 4; i++) {
+				for (int j = 0; j < 16; j++) {
+					UC1701Display(i, j, ' ');
+				}
+			}
+		}
+		
+		// Current Pointer Location
+		UC1701DisplayN(0,5,row);
+		UC1701DisplayN(0,7,line);
+
+		input = 0;
+	}
 }
 
 int main(void)
 {
+	// Enable FPU
+	FPUEnable();
+	FPULazyStackingEnable();
+
 	// Set the system clock to run at 200/1=200MHz using the PLL. 
 	// When using the ADC, you must either use the PLL or supply a 16 MHz clock source.
 	SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ);
@@ -58,7 +151,10 @@ int main(void)
 	GPIOPinConfigure(GPIO_PA1_U0TX);
 	GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
 	UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 115200, (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
-	UARTStdioConfig(0, 115200, SysCtlClockGet());
+	// Enable UART0 interrupt.
+	UARTIntEnable(UART0_BASE, UART_INT_RT);
+	IntEnable(INT_UART0);
+	UARTIntClear(UART0_BASE, 0);
 
 	// ADC0 init
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
@@ -100,37 +196,16 @@ int main(void)
 		0x00,0x00,0x00,0x3F,0x90,0x88,0x40,0x43,0x2C,0x10,0x28,0x46,0x41,0x80,0x80,0x00,
 	}; // "微处理器课设" in chn
 	UC1701ChineseDisplay(0, 4, 6,CHN);
-
-	// First Line goes to ADC & LCD
-	// Last Three Line goes to UART
-	int8_t line = 1, row = 0, count = 8;
+	
+	int8_t count = 8;
 	while (1)
 	{
 		// Trigger ADC0 conversion
 		ADCProcessorTrigger(ADC0_BASE, 0);
 		SysCtlDelay(SysCtlClockGet() / 20); // ADC Sample Delay
 
-		// ADC Display
-		if (flag == 1)
-		{
-			uint32_t value = sum / 8;
-			uint8_t tmp_value = value, digit = 0;
-			while (tmp_value != 0)
-			{
-				tmp_value /= 10;
-				digit++;
-			}
-			for (int i = digit; i < 4; i++) {
-				UC1701Display(0, i, ' ');
-			}
-			UC1701DisplayN(0, 0, value);
-			flag = 0;
-			sum = 0;
-		}
-		
-		// UART Display
-		count--;
 		/// Pointer Blink
+		count--;
 		if (count > 4)
 		{
 			UC1701Display(line, row, '_'); // Pointer on
@@ -139,62 +214,6 @@ int main(void)
 			if (count == 0){
 				count = 8;
 			}
-		}
-		
-		/// Loop For All Chars Avaliable
-		while (UARTCharsAvail(UART0_BASE))
-		{
-			uint16_t input = UARTCharGet(UART0_BASE);
-			
-			// Display Input ASCII Number
-			//UC1701DisplayN(0,9,input);
-
-			// Display Input ASCII Char
-			if ((input <= 126) && (input >= 32))
-			{
-				UC1701Display(line, row, input);
-				row += 1;
-			}
-
-			// Next Line
-			if ((row > 15) || (input == '\r'))
-			{
-				UC1701Display(line, row, ' ');
-				line += 1;
-				row = 0;
-			}
-
-			// Backspace
-			if (input == 127)
-			{
-				UC1701Display(line, row, ' ');
-				row -= 1;
-			}
-
-			// Last Line
-			if (row < 0)
-			{
-				line -= 1;
-				row = 15;
-			}
-
-			// SIGTERM / Clean Screen
-			if ((line > 3) || (line < 1) || (input == 3))
-			{
-				line = 1;
-				row = 0;
-				// Clean Up
-				for (int i = 1; i < 4; i++) {
-					for (int j = 0; j < 16; j++) {
-						UC1701Display(i, j, ' ');
-					}
-				}
-			}
-			
-			// Current Pointer Location
-			//UC1701DisplayN(0,5,row);
-			//UC1701DisplayN(0,7,line);
-			input = 0;
 		}
 	}
 }

@@ -93,6 +93,7 @@ __heap_limit
 ; the application interrupt handler
 ;
 ;******************************************************************************
+        EXTERN  UART0Handler
         EXTERN  ADC0Sequence0Handler 
 
 ;******************************************************************************
@@ -123,7 +124,7 @@ __Vectors
         DCD     IntDefaultHandler           ; GPIO Port C
         DCD     IntDefaultHandler           ; GPIO Port D
         DCD     IntDefaultHandler           ; GPIO Port E
-        DCD     IntDefaultHandler           ; UART0 Rx and Tx
+        DCD     UART0Handler                ; UART0 Rx and Tx
         DCD     IntDefaultHandler           ; UART1 Rx and Tx
         DCD     IntDefaultHandler           ; SSI0 Rx and Tx
         DCD     IntDefaultHandler           ; I2C0 Master and Slave
