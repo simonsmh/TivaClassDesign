@@ -3,27 +3,27 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
+#include "inc/hw_gpio.h"
+#include "inc/hw_ints.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
-#include "inc/hw_ints.h"
-#include "inc/hw_gpio.h"
+#include "driverlib/adc.h"
 #include "driverlib/gpio.h"
 #include "driverlib/pin_map.h"
 #include "driverlib/sysctl.h"
-#include "driverlib/adc.h"
 #include "driverlib/uart.h"
-#include "utils/uc1701.h"
 #include "utils/uartstdio.h"
+#include "utils/uc1701.h"
 
 uint8_t flag = 1;
 uint32_t pui32ADC0Value[8] = {0}, sum = 0;
-
 // First Line goes to ADC & LCD
 // Last Three Line goes to UART
+//  ADC | CHN Words
+// *_______________ LCD Init Line = 1, Row = 1
+// ________________ Matrix = 16 * (line - 1) + row
+// ________________ Last Line becomes input box
 int8_t line = 1, row = 0;
-//________
-//________ location = 16 * (line - 1) + row
-//________
 uint8_t matrix[48] = {
 	32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32,
 	32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32,
@@ -40,7 +40,7 @@ void UART0Handler(void)
 		uint8_t input = UARTCharGet(UART0_BASE);
 		
 		// Display Input ASCII Number
-		UC1701DisplayN(0,9,input);
+		//UC1701DisplayN(0,9,input);
 
 		// Display Input ASCII Char
 		if ((input <= 126) && (input >= 32))
@@ -72,8 +72,8 @@ void UART0Handler(void)
 			row = 15;
 		}
 
-		// SIGTERM / Clean Screen
-		if ((line > 3) || (line < 1) || (input == 3))
+		// Clean Screen
+		if ((line > 3) || (line < 1))
 		{
 			line = 3;
 			row = 0;
@@ -94,8 +94,8 @@ void UART0Handler(void)
 		}
 		
 		// Current Pointer Location
-		UC1701DisplayN(0,5,row);
-		UC1701DisplayN(0,7,line);
+		//UC1701DisplayN(0,5,row);
+		//UC1701DisplayN(0,7,line);
 
 		input = 0;
 	}
